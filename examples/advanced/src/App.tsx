@@ -7,8 +7,8 @@ import {
   Split,
   Notes,
   LaserPointer,
-  PresenterConsole,
   Code,
+  SlideLayout,
 } from 'react-slidify';
 
 const neonTheme = {
@@ -61,40 +61,41 @@ export default function DeckDemo() {
 
 export default function App() {
   return (
-    <Deck theme={neonTheme} plugins={[LaserPointer, PresenterConsole]}>
-      <Slide className="flex items-center justify-center">
-        <div style={{ textAlign: 'center' }}>
-          <Pill label="AI Ready" />
-          <h1 style={{ color: 'var(--slide-primary)', marginBottom: 8, letterSpacing: -1 }}>react-slidify</h1>
-          <p style={{ color: '#94a3b8', maxWidth: 640 }}>
-            The minimal deck engine with theming, plugins, presenter mode, print, layouts, and code highlighting.
-          </p>
-        </div>
+    <Deck theme={neonTheme} plugins={[LaserPointer]}>
+      <Slide>
+        <SlideLayout align="center" title={<span style={{ color: 'var(--slide-primary)' }}>react-slidify</span>} subtitle="AI-ready presentation engine">
+          <div style={{ display: 'grid', gap: 12, justifyItems: 'center' }}>
+            <Pill label="AI Ready" />
+            <p style={{ color: '#94a3b8', maxWidth: 720, textAlign: 'center' }}>
+              The minimal deck engine with theming, plugins, presenter mode, print, layouts, and code highlighting.
+            </p>
+          </div>
+        </SlideLayout>
       </Slide>
 
-      <Slide className="p-20">
-        <Split
-          ratio={0.42}
-          left={
-            <>
-              <h2 style={{ marginBottom: 12, fontFamily: 'var(--slide-font-head)' }}>Roadmap</h2>
-              <Roadmap />
-              <Notes>Call out the Q2 plugins milestone and Q3 presenter launch.</Notes>
-            </>
-          }
-          right={
-            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CodeSnippet />
-            </div>
-          }
-        />
+      <Slide>
+        <SlideLayout title="Roadmap" subtitle="Plugins, Presenter, Export" align="left">
+          <Split
+            ratio={0.42}
+            left={
+              <>
+                <Roadmap />
+                <Notes>Call out the Q2 plugins milestone and Q3 presenter launch.</Notes>
+              </>
+            }
+            right={
+              <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CodeSnippet />
+              </div>
+            }
+          />
+        </SlideLayout>
       </Slide>
 
-      <Slide className="flex items-center justify-center" style={{ background: '#0b1220' }}>
-        <div style={{ textAlign: 'center' }}>
-          <h2 style={{ color: 'var(--slide-primary)' }}>Presenter Console Built-In</h2>
-          <p style={{ color: '#cbd5e1' }}>Open another tab to see live/next, notes, timer, and controls.</p>
-        </div>
+      <Slide style={{ background: '#0b1220' }}>
+        <SlideLayout align="center" title={<span style={{ color: 'var(--slide-primary)' }}>Presenter Console Built-In</span>} subtitle="Open another tab to see live/next, notes, timer, and controls.">
+          <div />
+        </SlideLayout>
       </Slide>
     </Deck>
   );
