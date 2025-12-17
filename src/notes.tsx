@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const Notes: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
+export const Notes: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div style={{ display: 'none' }} data-slide-notes>
+    {children}
+  </div>
+);
 
 export const extractNotes = (node: React.ReactNode): React.ReactNode | null => {
   if (!node) return null;

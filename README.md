@@ -1,49 +1,51 @@
-# react-slidify
+# react-slidify ⚡️
 
-A lightweight React presentation engine for AI builders. Drop this micro-library into any React project to create smooth, scalable slide decks with animations, step-by-step reveals, theming, plugins, presenter mode, print/PDF support, and a polished control bar.
+A lightweight, AI-ready React presentation engine.
+
+[![npm version](https://img.shields.io/npm/v/react-slidify.svg)](https://www.npmjs.com/package/react-slidify)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![react-slidify demo](https://via.placeholder.com/800x400?text=Insert+GIF+Here)
+
+Drop this micro-library into any React project to create smooth, scalable slide decks with animations, step-by-step reveals, theming, plugins, presenter mode, and PDF support.
+
+Designed specifically for **AI Agents** and **LLMs** to generate reliable slide decks without complex CSS or state management.
 
 ## Features
 
-- **Auto-scaling**: Automatically scales to 16:9 aspect ratio on any screen size
-- **Smooth animations**: Powered by Framer Motion for professional transitions
-- **Step management**: Built-in support for revealing bullet points or elements step-by-step
-- **Keyboard navigation**: Arrow keys to navigate slides and steps
-- **Modern frame**: Hover-to-reveal control bar with progress, arrows, fullscreen
-- **Theming**: CSS variable-driven theme object (colors + fonts)
-- **Plugins**: Drop-in overlay components (e.g., Laser Pointer, Notes)
-- **Presenter mode**: BroadcastChannel-powered dual-screen presenter console
-- **Print/PDF mode**: One-click print-ready vertical rendering
-- **Smart layouts**: Built-in Split layout for AI-friendly slide composition
-- **Code highlighting**: Prism-based `<Code>` block for developers
-- **TypeScript support**: Fully typed for better developer experience
-- **Micro-library**: Minimal bundle size, no bloat
+- 📏 **Auto-scaling**: Automatically scales to 16:9 aspect ratio on any screen size (mobile to 4K).
+- 🎬 **Smooth animations**: Powered by Framer Motion for cinema-grade transitions.
+- 🪜 **Step management**: Built-in hooks for revealing bullet points one by one.
+- 🕹 **Modern UI**: Hover-to-reveal control bar with progress, arrows, and fullscreen toggle.
+- 🎨 **Theming**: Zero-config CSS variables for instant AI "skinning".
+- 🔌 **Plugins**: Drop-in overlay system (Laser Pointer, Live Polls, etc.).
+- 🎙 **Presenter Mode**: Dual-screen sync via `BroadcastChannel` (no server required).
+- 🖨 **PDF / Print**: One-click vertical rendering for export.
+- 🤖 **Smart Layouts**: Pre-built components like `<Split>` so AI doesn't break the layout.
+- 📝 **Speaker Notes**: Dedicated `<Notes>` component that only appears in Presenter View.
 
 ## Installation
 
 ```bash
 npm install react-slidify
-```
-
-### Peer Dependencies
-
-Make sure you have these installed in your project:
-
-```bash
 npm install react react-dom framer-motion
 ```
 
 ## Quick Start
 
+### 1) The Presentation (`App.tsx`)
+
 ```tsx
 import React from 'react';
-import { Deck, Slide, useStep, defaultTheme, LaserPointer, PresenterConsole, Notes, Split, Code } from 'react-slidify';
+import { Deck, Slide, useStep, defaultTheme, LaserPointer, Split, Notes } from 'react-slidify';
 
+// 1. Define a Theme
 const cyberTheme = {
   ...defaultTheme,
   colors: {
     background: '#0f172a',
     text: '#f8fafc',
-    primary: '#22d3ee',
+    primary: '#22d3ee', // Cyan
     secondary: '#94a3b8'
   },
   fonts: {
@@ -52,11 +54,12 @@ const cyberTheme = {
   }
 };
 
+// 2. Create a "Stepped" Component
 const BulletPoints = () => {
-  const { isActive } = useStep(3); // 3 steps to reveal
+  const { isActive } = useStep(3); // Register 3 steps
 
   return (
-    <div>
+    <div className="space-y-4">
       <p style={{ opacity: isActive(0) ? 1 : 0.2 }}>👉 Step 1: Define the Problem</p>
       <p style={{ opacity: isActive(1) ? 1 : 0.2 }}>👉 Step 2: Build the Solution</p>
       <p style={{ opacity: isActive(2) ? 1 : 0.2 }}>👉 Step 3: Profit</p>
@@ -67,44 +70,42 @@ const BulletPoints = () => {
 export default function App() {
   return (
     <Deck theme={cyberTheme} plugins={[LaserPointer]}>
+      
+      {/* Slide 1 */}
       <Slide className="flex items-center justify-center">
         <h1 style={{ color: 'var(--slide-primary)' }}>Welcome to react-slidify</h1>
       </Slide>
 
+      {/* Slide 2: Complex Layout */}
       <Slide className="p-20">
-        <h2 style={{ fontFamily: 'var(--slide-font-head)' }}>The Roadmap</h2>
-        <BulletPoints />
-        <Notes>Remember to call out Q2 spike.</Notes>
-      </Slide>
-
-      <Slide className="p-0">
         <Split
           ratio={0.4}
           left={
             <>
-              <h1>Quarterly Review</h1>
-              <ul><li>Q1 was slow</li><li>Q2 exploded</li></ul>
+              <h2>Quarterly Results</h2>
+              <BulletPoints />
             </>
           }
-          right={<img src="/chart.png" alt="Chart" />}
+          right={<img src="/chart.png" className="rounded-xl shadow-lg" />}
         />
-      </Slide>
-
-      <Slide className="flex items-center justify-center" style={{ background: 'black', color: 'white' }}>
-        <h1>Thank You</h1>
+        {/* These notes only show in Presenter Mode */}
+        <Notes>Don't forget to mention the Q2 spike in revenue.</Notes>
       </Slide>
     </Deck>
   );
 }
 ```
 
-Presenter console (open in another tab/window and point at the same app):
+### 2) The Presenter Console (`Presenter.tsx`)
+
+Create a separate route (e.g., `/presenter`) that renders this component. Open it on your laptop while projecting the main deck.
 
 ```tsx
-export function Presenter() {
+import { Deck, PresenterConsole } from 'react-slidify';
+
+export default function Presenter() {
   return (
     <Deck>
-      {/* slides */}
       <PresenterConsole />
     </Deck>
   );
@@ -115,82 +116,50 @@ export function Presenter() {
 
 ### `<Deck>`
 
-The root component that manages the presentation state.
+The root provider.
 
-**Props:**
-- `children`: React.ReactNode - The slide components
-- `theme?`: `DeckTheme` - Colors + fonts applied as CSS variables
-- `plugins?`: `Plugin[]` - Overlay components rendered above the slide
-- `printMode?`: boolean - Renders all slides vertically for print/PDF
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| theme | DeckTheme | Object defining colors and fonts. |
+| plugins | Plugin[] | Array of overlay components (e.g. LaserPointer). |
+| printMode | boolean | If true, renders vertically for PDF export. |
 
 ### `<Slide>`
 
-A wrapper for individual slides with automatic entry/exit animations.
+Wrapper for content. Handles entry/exit animations automatically.
 
-**Props:**
-- `children`: React.ReactNode - The slide content
-- `className?`: string - Optional CSS classes
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| className | string | Tailwind or CSS class. |
+| transition | object | Framer Motion transition override. |
 
-### `useStep(count: number)`
+### `useStep(count)`
 
-Hook for managing step-by-step reveals within a slide.
+Hook to create "builds" inside a slide.
 
-**Parameters:**
-- `count`: number - Number of steps in this slide
-
-**Returns:**
-- `isActive(index: number)`: boolean - Whether the step at index is active
-- `currentStep`: number - Current step index
-
-### `useAutoScaling(targetWidth?, targetHeight?)`
-
-Hook for manual scaling (automatically used by Deck).
-
-**Parameters:**
-- `targetWidth`: number (default: 1920)
-- `targetHeight`: number (default: 1080)
-
-**Returns:**
-- `scale`: number - Scale factor for CSS transform
+```tsx
+const { isActive, currentStep } = useStep(3);
+```
 
 ### `useDeck()`
 
 Hook to access deck context (advanced usage).
 
-**Returns:**
-- `slideIndex`: number
-- `stepIndex`: number
-- `direction`: 1 | -1
-- `next()`: () => void
-- `prev()`: () => void
-- `goToSlide(index: number)`: () => void
-- `registerSteps(count: number)`: () => void
-- `toggleFullscreen()`: () => void
-- `isFullscreen`: boolean
-- `totalSlides`: number
-- `slides`: React.ReactNode[] - Array of slide elements
-
-## Navigation
-
-- **Right Arrow**: Next slide or next step
-- **Left Arrow**: Previous slide or previous step
+**Returns:** `slideIndex`, `stepIndex`, `direction`, `next`, `prev`, `goToSlide`, `registerSteps`, `toggleFullscreen`, `isFullscreen`, `totalSlides`, `slides`.
 
 ## Presenter Mode (Dual Screen)
 
-Deck syncs across tabs using `BroadcastChannel`. Open one tab as the projector (slides) and another as the presenter console:
+Uses the browser's `BroadcastChannel` API to sync state between tabs without a server.
 
-```tsx
-<Deck plugins={[LaserPointer]}>
-  {/* slides */}
-  <PresenterConsole />
-</Deck>
-```
+1. Open your app on the projector (`/`).
+2. Open the presenter route (`/presenter`) on your laptop.
+3. Controlling the presenter view controls the projector.
 
 Presenter console shows live slide, next slide preview, speaker notes (via `<Notes>`), and a timer. State changes propagate automatically between tabs.
 
-## Print / PDF Mode
+## Print / PDF
 
-Pass `printMode` or simply use browser print (Ctrl+P). In print mode all slides render vertically with one slide per page; controls/plugins are hidden automatically.
+Pass `<Deck printMode={true} />` or simply use browser print (Ctrl/Cmd + P). In print mode all slides render vertically with one slide per page; controls/plugins are hidden automatically.
 
 ```tsx
 <Deck printMode>
@@ -200,16 +169,10 @@ Pass `printMode` or simply use browser print (Ctrl+P). In print mode all slides 
 
 ## Smart Layouts
 
-Use `<Split>` for fast, structured layouts without custom CSS:
+Don't let AI struggle with CSS. Use `<Split>` for perfect 2-column layouts.
 
 ```tsx
-<Slide>
-  <Split
-    ratio={0.4}
-    left={<h2>Quarterly Review</h2>}
-    right={<img src="/chart.png" alt="Chart" />}
-  />
-</Slide>
+<Split left={<h1>Text</h1>} right={<img src="..." />} ratio={0.5} />
 ```
 
 ## Code Highlighting
@@ -220,40 +183,12 @@ Developer-friendly code blocks powered by `prism-react-renderer`:
 <Code language="tsx" code={`const hello = 'world';`} />
 ```
 
-## Theming
+## Why is this "AI-Ready"?
 
-Provide a `DeckTheme` to the `Deck`. Colors and fonts become CSS variables available inside slides: `var(--slide-bg)`, `var(--slide-text)`, `var(--slide-primary)`, `var(--slide-secondary)`, `var(--slide-font-head)`, `var(--slide-font-body)`.
-
-## Plugins
-
-Plugins are simple React components that render in the overlay layer. Example:
-
-```tsx
-import { Plugin } from 'react-slidify';
-import { useDeck } from 'react-slidify';
-
-export const ClockPlugin: Plugin = () => {
-  const { slideIndex } = useDeck();
-  return (
-    <div style={{ position: 'absolute', top: 16, right: 24, color: 'white' }}>
-      Slide {slideIndex + 1}
-    </div>
-  );
-};
-```
-
-Pass plugins via `plugins={[ClockPlugin]}`.
-
-## Why AI-Ready?
-
-This library is designed for AI builders because:
-- Simple, predictable API
-- No complex state calculations
-- Standard React patterns
-- Automatic scaling prevents layout issues
-- Minimal abstraction - just wrap components in `<Slide>`
+- Safety: The AI generates semantic `<Slide>` blocks, not fragile HTML.
+- Consistency: `<Split>` and `useAutoScaling` ensure the deck looks perfect on any device.
+- Theming: The AI only needs to generate a JSON theme object to completely restyle the deck.
 
 ## License
 
-ISC
-
+MIT © [Your Name]
