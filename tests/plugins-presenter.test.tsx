@@ -19,20 +19,20 @@ describe('Plugins and presenter console', () => {
     expect(screen.getByTestId('plugin')).toBeInTheDocument();
   });
 
-  it('shows speaker notes in presenter console', () => {
+  it('renders presenter console (standalone, not plugin) and shows notes', () => {
     render(
-      <Deck plugins={[PresenterConsole]}>
+      <Deck>
         <Slide>
           <div>Slide A</div>
           <Notes>Remember to demo</Notes>
         </Slide>
         <Slide><div>Slide B</div></Slide>
+        <PresenterConsole />
       </Deck>
     );
 
     expect(screen.getByText(/Speaker Notes/i)).toBeInTheDocument();
-    const notesNodes = screen.getAllByText(/Remember to demo/i);
-    expect(notesNodes.length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Remember to demo/i).length).toBeGreaterThan(0);
   });
 
   it('syncs slides across presenter and projector via BroadcastChannel', () => {

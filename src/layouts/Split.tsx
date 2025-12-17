@@ -20,14 +20,29 @@ export const Split = ({ left, right, ratio = 0.5 }: SplitProps) => {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', width: '100%' }}>
-      <div style={{ flex: leftRatio, padding: 60, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `${leftRatio}fr ${rightRatio}fr`,
+        height: '100%',
+        width: '100%',
+        gap: 60,
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
         {left}
       </div>
-      <div style={{ flex: rightRatio, height: '100%', overflow: 'hidden' }}>
+      <div
+        style={{
+          position: 'relative',
+          height: '100%',
+          width: '100%',
+          borderRadius: 16,
+          overflow: 'hidden',
+        }}
+      >
         {renderRight()}
       </div>
     </div>
   );
 };
-

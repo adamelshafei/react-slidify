@@ -222,11 +222,15 @@ export const Deck = ({ children, theme = defaultTheme, plugins = [], printMode =
           boxShadow: effectivePrintMode ? undefined : '0 0 50px rgba(0,0,0,0.5)',
           ...themeStyle 
         }}>
-          {content}
+          <div className="layer-background" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
+
+          <div className="layer-slide" style={{ position: 'relative', zIndex: 10, width: '100%', height: '100%' }}>
+            {content}
+          </div>
           
           {/* Plugin Overlay Layer */}
           {!effectivePrintMode && (
-            <div className="deck-plugins" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <div className="layer-plugins deck-plugins" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 20 }}>
               {plugins.map((PluginComponent, i) => (
                 <div key={i} style={{ pointerEvents: 'auto' }}>
                   <PluginComponent />
@@ -237,7 +241,11 @@ export const Deck = ({ children, theme = defaultTheme, plugins = [], printMode =
         </div>
       
         {/* Control Bar (renders outside scaled area to stay crisp) */}
-        {!effectivePrintMode && <DeckControls />}
+        {!effectivePrintMode && (
+          <div className="layer-controls" style={{ position: 'absolute', inset: 0, zIndex: 30, pointerEvents: 'none' }}>
+            <DeckControls />
+          </div>
+        )}
       </div>
     </DeckContext.Provider>
   );
