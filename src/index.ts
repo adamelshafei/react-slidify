@@ -1,0 +1,14 @@
+export { Deck } from './Deck';
+export { Slide } from './Slide';
+export { useStep, useAutoScaling } from './hooks';
+export { useDeck } from './DeckContext';
+export type { DeckContextType } from './DeckContext';
+export { DeckControls } from './DeckControls';
+export type { DeckTheme } from './theme';
+export { defaultTheme } from './theme';
+export type { Plugin } from './types';
+export { LaserPointer } from './plugins/LaserPointer';
+export { PresenterConsole } from './PresenterConsole';
+export { Notes } from './notes';
+export { Split } from './layouts/Split';
+export { Code } from './blocks/Code';
