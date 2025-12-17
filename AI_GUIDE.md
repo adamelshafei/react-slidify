@@ -27,6 +27,11 @@ Please generate code using ONLY this library. Do not write custom CSS for layout
    - Props: `left` (ReactNode), `right` (ReactNode), `ratio` (default 0.5).
    - Example: <Split left={<h1>Title</h1>} right={<img src="..." />} />
 
+4. <SlideLayout> (Safe Zone)
+   - Usage: Wraps slide content in a grid with padding and header slots.
+   - Props: `title?`, `subtitle?`, `align? ('left' | 'center')`.
+   - Example: <SlideLayout title="Hello" subtitle="World">{content}</SlideLayout>
+
 4. useStep(count) (Hook)
    - Usage: For revealing items one by one.
    - Returns: { isActive(index), currentStep }
@@ -40,9 +45,11 @@ Please generate code using ONLY this library. Do not write custom CSS for layout
 
 # Rules for Generation
 - ALWAYS use <Split> for side-by-side content (text + image).
+- Wrap slides with <SlideLayout> to keep a safe padding/grid and avoid edge collisions.
 - Use standard Tailwind classes for inner styling (text-4xl, font-bold).
 - Do not create custom "slide containers" or "viewports"; <Deck> handles that.
 - Create small, modular components for slides with internal logic (like steps).
+- PresenterConsole is a separate view/route, not a plugin. Keep it out of the `plugins` array.
 
 ```
 
@@ -56,6 +63,7 @@ Once the AI knows the context above, you can give it a high-level task.
 
 > **User Prompt:**
 > "Create a 5-slide pitch deck for a coffee startup called 'JavaScript'. Use a dark theme with orange accents.
+>
 > * Slide 1: Title
 > * Slide 2: The Problem (text on left, sad person image on right)
 > * Slide 3: The Solution (3 bullet points that reveal one by one)
@@ -76,7 +84,7 @@ You don't need to manually pick colors. Ask the AI to generate a theme object.
 Since `react-slidify` is just React, you can ask the AI to embed complex logic.
 
 > **User Prompt:**
-> "Create a new slide that contains a functional ROI calculator. It should have two inputs (Cost, Price) and show the profit in real-time. Wrap it in a <Slide>."
+> "Create a new slide that contains a functional ROI calculator. It should have two inputs (Cost, Price) and show the profit in real-time. Wrap it in a `<Slide>`."
 
 ---
 
@@ -107,11 +115,11 @@ Since `react-slidify` is just React, you can ask the AI to embed complex logic.
 
 ## 🐛 Common AI Mistakes & Fixes
 
-**Mistake:** The AI tries to write `className="h-screen w-screen"` on a Slide.
-**Fix:** Remind it: *"Don't set dimensions on the Slide. The Deck component handles the 16:9 scaling automatically."*
+**Mistake:** The AI tries to write `className="h-screen w-screen"` on a `<Slide>`.
+**Fix:** Remind it: *"Don't set dimensions on the `<Slide>`. The Deck component handles the 16:9 scaling automatically."*
 
 **Mistake:** The AI tries to use `framer-motion` manually for slide transitions.
-**Fix:** Remind it: *"The <Slide> component handles transitions. Just put content inside it."*
+**Fix:** Remind it: *"The `<Slide>` component handles transitions. Just put content inside it."*
 
 **Mistake:** The layout breaks on mobile.
 **Fix:** Ensure the AI uses `<Split>` or Flexbox. The library scales the *entire container* down, so standard desktop CSS layouts work perfectly on mobile without media queries.

@@ -21,7 +21,7 @@ Designed specifically for **AI Agents** and **LLMs** to generate reliable slide 
 - 🔌 **Plugins**: Drop-in overlay system (Laser Pointer, Live Polls, etc.).
 - 🎙 **Presenter Mode**: Dual-screen sync via `BroadcastChannel` (no server required).
 - 🖨 **PDF / Print**: One-click vertical rendering for export.
-- 🤖 **Smart Layouts**: Pre-built components like `<Split>` so AI doesn't break the layout.
+- 🤖 **Smart Layouts**: Pre-built components like `<Split>` and `<SlideLayout>` so AI doesn't break the layout.
 - 📝 **Speaker Notes**: Dedicated `<Notes>` component that only appears in Presenter View.
 
 ## Installation
@@ -37,7 +37,7 @@ npm install react react-dom framer-motion
 
 ```tsx
 import React from 'react';
-import { Deck, Slide, useStep, defaultTheme, LaserPointer, Split, Notes } from 'react-slidify';
+import { Deck, Slide, useStep, defaultTheme, LaserPointer, Split, Notes, SlideLayout } from 'react-slidify';
 
 // 1. Define a Theme
 const cyberTheme = {
@@ -72,24 +72,27 @@ export default function App() {
     <Deck theme={cyberTheme} plugins={[LaserPointer]}>
       
       {/* Slide 1 */}
-      <Slide className="flex items-center justify-center">
-        <h1 style={{ color: 'var(--slide-primary)' }}>Welcome to react-slidify</h1>
+      <Slide>
+        <SlideLayout align="center" title={<span style={{ color: 'var(--slide-primary)' }}>Welcome to react-slidify</span>}>
+          <div />
+        </SlideLayout>
       </Slide>
 
       {/* Slide 2: Complex Layout */}
-      <Slide className="p-20">
-        <Split
-          ratio={0.4}
-          left={
-            <>
-              <h2>Quarterly Results</h2>
-              <BulletPoints />
-            </>
-          }
-          right={<img src="/chart.png" className="rounded-xl shadow-lg" />}
-        />
-        {/* These notes only show in Presenter Mode */}
-        <Notes>Don't forget to mention the Q2 spike in revenue.</Notes>
+      <Slide>
+        <SlideLayout title="Quarterly Results" subtitle="Split layout + steps">
+          <Split
+            ratio={0.4}
+            left={
+              <>
+                <BulletPoints />
+                {/* These notes only show in Presenter Mode */}
+                <Notes>Don't forget to mention the Q2 spike in revenue.</Notes>
+              </>
+            }
+            right={<img src="/chart.png" className="rounded-xl shadow-lg" />}
+          />
+        </SlideLayout>
       </Slide>
     </Deck>
   );
@@ -133,6 +136,16 @@ Wrapper for content. Handles entry/exit animations automatically.
 | className | string | Tailwind or CSS class. |
 | transition | object | Framer Motion transition override. |
 
+### `<SlideLayout>`
+
+Safe-zone layout wrapper that prevents edge collisions.
+
+| Prop | Type | Description |
+| :--- | :--- | :--- |
+| title | ReactNode | Optional heading (large) |
+| subtitle | ReactNode | Optional subheading |
+| align | 'left' \| 'center' | Aligns header/content; default 'left' |
+
 ### `useStep(count)`
 
 Hook to create "builds" inside a slide.
@@ -152,7 +165,7 @@ Hook to access deck context (advanced usage).
 Uses the browser's `BroadcastChannel` API to sync state between tabs without a server.
 
 1. Open your app on the projector (`/`).
-2. Open the presenter route (`/presenter`) on your laptop.
+2. Open the **presenter route** (e.g., `/presenter`) on your laptop. PresenterConsole is **not** a plugin; it is a separate view.
 3. Controlling the presenter view controls the projector.
 
 Presenter console shows live slide, next slide preview, speaker notes (via `<Notes>`), and a timer. State changes propagate automatically between tabs.

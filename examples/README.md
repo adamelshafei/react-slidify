@@ -23,7 +23,7 @@ To use the presenter view, either create a second entry/route in Vite or import 
 A more comprehensive demo (still minimal) that includes:
 - Neon theme + Split layout + multi-step roadmap
 - `Notes`, `LaserPointer`, code highlighting via `<Code>`
-- PresenterConsole loaded as a plugin (open a second tab to see live/next + notes)
+- PresenterConsole available via separate entry (`src/Presenter.tsx`) — open in another tab; it is **not** a plugin
 
 Run it:
 ```bash

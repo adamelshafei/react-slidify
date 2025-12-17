@@ -11,4 +11,5 @@ export { LaserPointer } from './plugins/LaserPointer';
 export { PresenterConsole } from './PresenterConsole';
 export { Notes } from './notes';
 export { Split } from './layouts/Split';
+export { SlideLayout } from './layouts/SlideLayout';
 export { Code } from './blocks/Code';

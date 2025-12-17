@@ -5,6 +5,7 @@ import { Slide } from '../src/Slide';
 import { PresenterConsole } from '../src/PresenterConsole';
 import { Notes } from '../src/notes';
 import { useDeck } from '../src/DeckContext';
+import { DeckContext } from '../src/DeckContext';
 
 describe('Plugins and presenter console', () => {
   it('renders plugins overlay components', () => {
@@ -20,15 +21,32 @@ describe('Plugins and presenter console', () => {
   });
 
   it('renders presenter console (standalone, not plugin) and shows notes', () => {
+    const slides = [
+      <div key="a">
+        Slide A
+        <Notes>Remember to demo</Notes>
+      </div>,
+      <div key="b">Slide B</div>
+    ];
+
+    const ctx = {
+      slideIndex: 0,
+      stepIndex: 0,
+      direction: 1 as const,
+      next: () => {},
+      prev: () => {},
+      goToSlide: () => {},
+      registerSteps: () => {},
+      totalSlides: slides.length,
+      toggleFullscreen: () => {},
+      isFullscreen: false,
+      slides,
+    };
+
     render(
-      <Deck>
-        <Slide>
-          <div>Slide A</div>
-          <Notes>Remember to demo</Notes>
-        </Slide>
-        <Slide><div>Slide B</div></Slide>
+      <DeckContext.Provider value={ctx}>
         <PresenterConsole />
-      </Deck>
+      </DeckContext.Provider>
     );
 
     expect(screen.getByText(/Speaker Notes/i)).toBeInTheDocument();
