@@ -55,6 +55,29 @@ Please generate code using ONLY this library. Do not write custom CSS for layout
 
 ---
 
+## 🧭 v2 JSON-First Workflow
+
+Prefer JSON over JSX when building with LLMs. The contract lives in `src/schema.ts`:
+
+- Layouts: `Title`, `Section`, `Split`, `Bullets`, `Code`
+- Deck: `{ title, theme: 'dark' | 'light' | 'cyber' | 'corporate', slides: SlideData[] }`
+- Each slide can include `content.accent` to override highlight color and `notes` for presenter mode.
+
+Render with three lines of code:
+
+```tsx
+import { JsonDeck } from 'react-slidify';
+import deck from './deck.json';
+
+export default function App() {
+  return <JsonDeck data={deck} />;
+}
+```
+
+If the AI invents a layout, `SlideFactory` will show a safe fallback instead of crashing.
+
+---
+
 ## 🛠 Workflow Examples
 
 ### 1. Generating a New Deck (Cursor / Replit)

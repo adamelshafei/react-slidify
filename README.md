@@ -22,7 +22,7 @@ Designed specifically for **AI Agents** and **LLMs** to generate reliable slide 
 - 🎙 **Presenter Mode**: Dual-screen sync via `BroadcastChannel` (no server required).
 - 🖨 **PDF / Print**: One-click vertical rendering for export.
 - 🤖 **Smart Layouts**: Pre-built components like `<Split>` and `<SlideLayout>` so AI doesn't break the layout.
-- 📝 **Speaker Notes**: Dedicated `<Notes>` component that only appears in Presenter View.
+- 📦 **JSON Mode (v2)**: Feed the library typed JSON and render hardened layouts automatically.
 
 ## Installation
 
@@ -112,6 +112,48 @@ export default function Presenter() {
       <PresenterConsole />
     </Deck>
   );
+}
+```
+
+## JSON Mode (v2)
+
+Let the AI output plain JSON while `react-slidify` handles React, CSS, and layout safety.
+
+- **Schema:** `src/schema.ts` defines the contract (`LayoutType`, `SlideData`, `DeckData`).
+- **Safe layouts:** `Title`, `Section`, `Split`, `Bullets`, `Code`.
+- **Registry:** `SlideFactory` routes JSON slides to hardened components with fallbacks.
+- **Entry point:** `<JsonDeck data={...} />` wraps the deck, applies themes, and renders hidden notes.
+
+**Example JSON**
+
+```json
+{
+  "title": "Mars History",
+  "theme": "dark",
+  "slides": [
+    { "id": "1", "layout": "Title", "title": "The Red Planet", "subtitle": "A History of Exploration" },
+    {
+      "id": "2",
+      "layout": "Split",
+      "title": "Viking 1 (1976)",
+      "content": {
+        "bullets": ["First successful landing", "Operated for 6 years", "Sent first color photos"],
+        "image": "https://example.com/viking.jpg"
+      },
+      "notes": "Mention the soil analysis results here."
+    }
+  ]
+}
+```
+
+**Rendering from JSON**
+
+```tsx
+import deckData from './mars.json';
+import { JsonDeck } from 'react-slidify';
+
+export default function App() {
+  return <JsonDeck data={deckData} />;
 }
 ```
 
