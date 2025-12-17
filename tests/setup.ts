@@ -45,21 +45,44 @@ document.documentElement.requestFullscreen = vi.fn(async () => {
   (document as any).fullscreenElement = null;
 });
 
-// matchMedia mock for print detection
-if (!window.matchMedia) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  window.matchMedia = () => ({
-    matches: false,
-    media: '',
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    onchange: null,
-    dispatchEvent: () => false,
-  });
-}
+// matchMedia mock for print detection with a toggle
+const matchMediaListeners = new Set<(e: MediaQueryListEvent) => void>();
+let printMatches = false;
+
+const mockMql = {
+  get matches() {
+    return printMatches;
+  },
+  media: 'print',
+  addEventListener: (_: string, cb: (e: MediaQueryListEvent) => void) => matchMediaListeners.add(cb),
+  removeEventListener: (_: string, cb: (e: MediaQueryListEvent) => void) => matchMediaListeners.delete(cb),
+  addListener: (cb: (e: MediaQueryListEvent) => void) => matchMediaListeners.add(cb),
+  removeListener: (cb: (e: MediaQueryListEvent) => void) => matchMediaListeners.delete(cb),
+  onchange: null as any,
+  dispatchEvent: () => false,
+};
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: (query: string) => {
+    if (query === 'print') return mockMql;
+    return {
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      onchange: null,
+      dispatchEvent: () => false,
+    };
+  },
+});
+
+(globalThis as any).__setPrintMatches = (value: boolean) => {
+  printMatches = value;
+  matchMediaListeners.forEach((cb) => cb({ matches: value } as MediaQueryListEvent));
+};
 
 // Resize observer not needed but silence potential access
 if (!(window as any).ResizeObserver) {

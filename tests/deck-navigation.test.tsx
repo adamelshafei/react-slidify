@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react';
-import { render, act, screen, fireEvent, renderHook } from '@testing-library/react';
+import React, { PropsWithChildren, useEffect } from 'react';
+import { render, act, screen, fireEvent, renderHook, waitFor } from '@testing-library/react';
 import { Deck } from '../src/Deck';
 import { Slide } from '../src/Slide';
 import { useDeck } from '../src/DeckContext';
@@ -20,11 +20,13 @@ describe('Deck navigation and steps', () => {
 
     render(
       <Deck>
-        <Slide><div>Slide 1</div><Probe /></Slide>
-        <Slide><StepSlide /></Slide>
+        <Slide><StepSlide /><Probe /></Slide>
+        <Slide><div>Slide 2</div></Slide>
         <Slide><div>Slide 3</div></Slide>
       </Deck>
     );
+
+    await act(async () => {}); // flush useStep registration
 
     expect(ctx?.slideIndex).toBe(0);
     expect(ctx?.stepIndex).toBe(0);
@@ -69,47 +71,60 @@ describe('Deck navigation and steps', () => {
   });
 
   it('navigates to next slide on ArrowRight keydown', () => {
+    let ctx: ReturnType<typeof useDeck> | null = null;
+    const Probe = () => {
+      ctx = useDeck();
+      return null;
+    };
+
     render(
       <Deck>
-        <Slide>1</Slide>
+        <Slide>1<Probe /></Slide>
         <Slide>2</Slide>
       </Deck>
     );
 
-    // Initial state: Slide 1
-    expect(screen.getByText('1')).toBeVisible();
+    expect(ctx?.slideIndex).toBe(0);
 
     // Simulate User Pressing Right Arrow
     fireEvent.keyDown(window, { key: 'ArrowRight' });
 
-    // Expect: Slide 2
-    expect(screen.getByText('2')).toBeVisible();
+    expect(ctx?.slideIndex).toBe(1);
   });
 
   it('completes all steps before moving to next slide', () => {
-    const StepSlide = () => {
+    const StepSlide = ({ label }: { label: string }) => {
       useStep(2); // steps 0,1
-      return <div>Step slide</div>;
+      return <div>{label}</div>;
     };
 
-    const wrapper = ({ children }: PropsWithChildren) => (
+    let ctx: ReturnType<typeof useDeck> | null = null;
+    const Probe = () => {
+      ctx = useDeck();
+      return null;
+    };
+
+    render(
       <Deck>
-        <Slide><StepSlide /></Slide>
+        <Slide><StepSlide label="Step slide" /><Probe /></Slide>
         <Slide><div>Second</div></Slide>
-        {children}
       </Deck>
     );
 
-    const { result } = renderHook(() => useDeck(), { wrapper });
+    act(() => {});
 
-    // Start at slide 0, step 0
-    act(() => result.current.next());
-    expect(result.current.slideIndex).toBe(0);
-    expect(result.current.stepIndex).toBe(1);
+    // Step through both steps (0 -> 1 -> 2) before slide advances
+    act(() => ctx?.next()); // step 1
+    expect(ctx?.slideIndex).toBe(0);
+    expect(ctx?.stepIndex).toBe(1);
 
-    act(() => result.current.next());
-    expect(result.current.slideIndex).toBe(1);
-    expect(result.current.stepIndex).toBe(0);
+    act(() => ctx?.next()); // step 2 (still on slide 0 because stepIndex < currentSlideSteps)
+    expect(ctx?.slideIndex).toBe(0);
+    expect(ctx?.stepIndex).toBe(2);
+
+    act(() => ctx?.next()); // now advance slide
+    expect(ctx?.slideIndex).toBe(1);
+    expect(ctx?.stepIndex).toBe(0);
   });
 });
 

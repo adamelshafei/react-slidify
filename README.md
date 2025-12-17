@@ -191,4 +191,4 @@ Developer-friendly code blocks powered by `prism-react-renderer`:
 
 ## License
 
-MIT © [Your Name]
+MIT © Adam Elshafei

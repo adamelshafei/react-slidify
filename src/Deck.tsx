@@ -24,8 +24,9 @@ export const Deck = ({ children, theme = defaultTheme, plugins = [], printMode =
 
   const slides = React.Children.toArray(children);
   const totalSlides = slides.length;
-  const scale = printMode || mediaPrintActive ? 1 : useAutoScaling();
+  const autoScale = useAutoScaling();
   const effectivePrintMode = printMode || mediaPrintActive;
+  const scale = effectivePrintMode ? 1 : autoScale;
 
   // How many sub-steps does the current slide have?
   const currentSlideSteps = slideStepCounts[slideIndex] || 0;
