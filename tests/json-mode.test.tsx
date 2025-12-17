@@ -47,7 +47,9 @@ describe('JSON mode v2', () => {
     expect(screen.getByText('Split Title')).toBeInTheDocument();
     expect(screen.getByText('Bullet Title')).toBeInTheDocument();
     expect(screen.getByText('Code Sample')).toBeInTheDocument();
-    expect(screen.getByText(/const a = 1/)).toBeInTheDocument();
+
+    const pre = document.querySelector('pre');
+    expect(pre?.textContent?.replace(/\s+/g, ' ').includes('const a = 1')).toBe(true);
   });
 
   it('falls back gracefully on unknown layouts', () => {

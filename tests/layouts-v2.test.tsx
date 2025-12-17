@@ -60,15 +60,14 @@ describe('Hardened layouts (v2)', () => {
 
     const bulletDot = screen.getAllByText('•')[0] as HTMLElement;
     expect(getComputedStyle(bulletDot).color).toBe('rgb(255, 0, 170)');
-    const container = bulletDot.closest('div')?.parentElement as HTMLElement;
+    const container = bulletDot.closest('div') as HTMLElement; // scroll container wraps the <ul>
     expect(getComputedStyle(container).overflowY).toBe('auto');
   });
 
   it('CodeSlide renders code with language', () => {
     renderInDeck(<CodeSlide title="Code" subtitle="Example" code={'const x = 1;'} language="ts" />);
-    expect(
-      screen.getByText((_, node) => Boolean(node?.textContent?.includes('const x = 1')))
-    ).toBeInTheDocument();
+    const pre = document.querySelector('pre');
+    expect(pre?.textContent?.replace(/\s+/g, ' ').includes('const x = 1')).toBe(true);
     expect(screen.getByText('Code')).toBeInTheDocument();
   });
 
