@@ -22,8 +22,22 @@ const variants = {
   })
 };
 
-export const Slide = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
+type SlideProps = {
+  children: React.ReactNode;
+  className?: string;
+  staticRender?: boolean;
+};
+
+export const Slide = ({ children, className = "", staticRender = false }: SlideProps) => {
   const { direction } = useDeck();
+
+  if (staticRender) {
+    return (
+      <div style={{ width: '100%', minHeight: '100%' }} className={`slide-wrapper ${className}`.trim()}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div

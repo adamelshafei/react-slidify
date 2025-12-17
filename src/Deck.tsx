@@ -176,22 +176,23 @@ export const Deck = ({ children, theme = defaultTheme, plugins = [], printMode =
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [next, prev]);
 
-  const content = effectivePrintMode ? (
-    slides.map((slide, i) => (
+  const renderStaticSlide = (slide: React.ReactNode, key: number) => {
+    if (React.isValidElement(slide)) {
+      return React.cloneElement(slide as React.ReactElement, { staticRender: true, key });
+    }
+    return (
       <div
-        key={i}
+        key={key}
         className="slide-wrapper"
-        style={{
-          position: 'relative',
-          width: '100%',
-          minHeight: '100vh',
-          background: 'var(--slide-bg)',
-          color: 'var(--slide-text)',
-        }}
+        style={{ width: '100%', minHeight: '100%', background: 'var(--slide-bg)', color: 'var(--slide-text)' }}
       >
         {slide}
       </div>
-    ))
+    );
+  };
+
+  const content = effectivePrintMode ? (
+    slides.map((slide, i) => renderStaticSlide(slide, i))
   ) : (
     <AnimatePresence initial={false} custom={direction} mode='popLayout'>
       {/* We key by slideIndex so framer-motion knows when to swap */}
