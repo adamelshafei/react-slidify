@@ -1,4 +1,4 @@
-import { Deck, Slide, useStep, defaultTheme, Split, Notes, LaserPointer } from 'react-slidify';
+import { Deck, Slide, useStep, defaultTheme, Split, Notes, LaserPointer, SlideLayout } from 'react-slidify';
 
 const cyberTheme = {
   ...defaultTheme,
@@ -28,22 +28,25 @@ const Bullets = () => {
 export default function App() {
   return (
     <Deck theme={cyberTheme} plugins={[LaserPointer]}>
-      <Slide className="flex items-center justify-center">
-        <h1 style={{ color: 'var(--slide-primary)' }}>Welcome to react-slidify</h1>
+      <Slide>
+        <SlideLayout align="center" title={<span style={{ color: 'var(--slide-primary)' }}>Welcome to react-slidify</span>}>
+          <div />
+        </SlideLayout>
       </Slide>
 
-      <Slide className="p-20">
-        <Split
-          ratio={0.4}
-          left={
-            <>
-              <h2 style={{ fontFamily: 'var(--slide-font-head)' }}>Quarterly Results</h2>
-              <Bullets />
-              <Notes>Remember to call out the Q2 spike.</Notes>
-            </>
-          }
-          right={<img src="https://via.placeholder.com/800x500" alt="Chart" style={{ borderRadius: 12 }} />}
-        />
+      <Slide>
+        <SlideLayout title="Quarterly Results" subtitle="Split layout + steps">
+          <Split
+            ratio={0.4}
+            left={
+              <>
+                <Bullets />
+                <Notes>Remember to call out the Q2 spike.</Notes>
+              </>
+            }
+            right={<img src="https://via.placeholder.com/800x500" alt="Chart" style={{ borderRadius: 12 }} />}
+          />
+        </SlideLayout>
       </Slide>
     </Deck>
   );
